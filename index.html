@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منصة الأساتذة الذكية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{--primary:#2563eb;--primary-dark:#1d4ed8;--secondary:#7c3aed;--accent:#06b6d4;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--dark:#0f172a;--gray:#64748b;--card-bg:#fff;--shadow:0 4px 6px -1px rgba(0,0,0,0.1);--shadow-lg:0 20px 25px -5px rgba(0,0,0,0.1)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Tajawal',sans-serif;background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#334155 100%);min-height:100vh;color:var(--dark);overflow-x:hidden}
+.bg-animation{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;overflow:hidden}
+.bg-animation .circle{position:absolute;border-radius:50%;opacity:.1;animation:float 20s infinite ease-in-out}
+.bg-animation .circle:nth-child(1){width:400px;height:400px;background:var(--primary);top:-100px;right:-100px}
+.bg-animation .circle:nth-child(2){width:300px;height:300px;background:var(--secondary);bottom:-50px;left:-50px;animation-delay:5s}
+.bg-animation .circle:nth-child(3){width:200px;height:200px;background:var(--accent);top:50%;left:50%;animation-delay:10s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-30px) scale(1.1)}66%{transform:translate(-20px,20px) scale(.9)}}
+
+/* ====== صفحات الدخول ====== */
+.page{display:none;min-height:100vh}
+.page.active{display:flex;justify-content:center;align-items:center;padding:20px}
+
+.gateway-card{background:var(--card-bg);border-radius:28px;padding:48px 40px;width:100%;max-width:520px;box-shadow:var(--shadow-lg);text-align:center;position:relative;overflow:hidden}
+.gateway-card::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--primary),var(--secondary),var(--accent))}
+.gateway-logo{width:80px;height:80px;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 10px 30px rgba(37,99,235,.3)}
+.gateway-logo i{font-size:36px;color:white}
+.gateway-card h1{font-size:26px;font-weight:900;color:var(--dark);margin-bottom:8px}
+.gateway-card p{color:var(--gray);font-size:15px;margin-bottom:32px}
+
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.role-card{padding:28px 20px;border-radius:20px;border:2px solid #e2e8f0;cursor:pointer;transition:all .3s ease;text-align:center;background:#f8fafc}
+.role-card:hover{border-color:var(--primary);transform:translateY(-4px);box-shadow:0 10px 30px rgba(37,99,235,.15)}
+.role-card .role-icon{width:60px;height:60px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px}
+.role-card.teacher-role .role-icon{background:#dbeafe;color:var(--primary)}
+.role-card.admin-role .role-icon{background:#fee2e2;color:var(--danger)}
+.role-card h3{font-size:18px;font-weight:800;margin-bottom:6px}
+.role-card span{font-size:13px;color:var(--gray)}
+
+.back-btn{display:inline-flex;align-items:center;gap:8px;color:var(--gray);font-size:14px;font-weight:700;cursor:pointer;margin-bottom:20px;transition:color .3s;background:none;border:none;font-family:'Tajawal',sans-serif}
+.back-btn:hover{color:var(--primary)}
+
+.input-group{position:relative;margin-bottom:18px;text-align:right}
+.input-group label{display:block;font-weight:700;color:var(--dark);margin-bottom:6px;font-size:14px}
+.input-group input{width:100%;padding:14px 16px 14px 48px;border:2px solid #e2e8f0;border-radius:12px;font-size:16px;font-family:'Tajawal',sans-serif;transition:all .3s ease;background:#f8fafc}
+.input-group input:focus{outline:none;border-color:var(--primary);background:white;box-shadow:0 0 0 4px rgba(37,99,235,.1)}
+.input-group i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--gray);font-size:18px}
+
+.btn{width:100%;padding:16px;border:none;border-radius:12px;font-size:18px;font-weight:700;font-family:'Tajawal',sans-serif;cursor:pointer;transition:all .3s ease;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;box-shadow:0 4px 15px rgba(37,99,235,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(37,99,235,.4)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-danger{background:linear-gradient(135deg,var(--danger),var(--warning));color:white;box-shadow:0 4px 15px rgba(239,68,68,.3)}
+.btn-danger:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(239,68,68,.4)}
+
+.alert{padding:14px 18px;border-radius:12px;margin-bottom:20px;font-weight:600;display:none;align-items:center;gap:12px;font-size:14px}
+.alert.error{display:flex;background:#fee2e2;color:#991b1b;border-right:4px solid var(--danger)}
+.alert.success{display:flex;background:#d1fae5;color:#065f46;border-right:4px solid var(--success)}
+
+/* ====== لوحة التحكم ====== */
+.dashboard{display:none;min-height:100vh}
+.dashboard.active{display:block}
+.sidebar{position:fixed;right:0;top:0;width:260px;height:100vh;background:linear-gradient(180deg,var(--dark) 0%,#1e293b 100%);padding:24px 20px;z-index:100;overflow-y:auto}
+.sidebar-brand{display:flex;align-items:center;gap:10px;margin-bottom:28px;padding-bottom:18px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-brand .logo-small{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.sidebar-brand .logo-small.teacher{background:linear-gradient(135deg,var(--primary),var(--secondary))}
+.sidebar-brand .logo-small.admin{background:linear-gradient(135deg,var(--danger),var(--warning))}
+.sidebar-brand .logo-small i{color:white;font-size:20px}
+.sidebar-brand h2{color:white;font-size:17px;font-weight:800}
+.nav-item{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;color:rgba(255,255,255,.7);cursor:pointer;transition:all .3s ease;margin-bottom:6px;font-weight:600;font-size:14px}
+.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.1);color:white}
+.nav-item i{font-size:18px;width:22px;text-align:center}
+
+.main-content{margin-right:260px;padding:24px;min-height:100vh}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;background:rgba(255,255,255,.05);padding:14px 20px;border-radius:16px;backdrop-filter:blur(10px);flex-wrap:wrap;gap:12px}
+.top-bar h1{color:white;font-size:22px;font-weight:800}
+.actions{display:flex;gap:10px}
+.user-info{display:flex;align-items:center;gap:10px}
+.user-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px}
+.user-avatar.teacher{background:linear-gradient(135deg,var(--primary),var(--secondary))}
+.user-avatar.admin{background:linear-gradient(135deg,var(--danger),var(--warning))}
+.user-name{color:white;font-weight:700;font-size:14px}
+.user-role{color:rgba(255,255,255,.6);font-size:12px}
+.logout-btn{background:rgba(255,255,255,.1);border:none;color:white;padding:8px 16px;border-radius:10px;cursor:pointer;font-family:'Tajawal',sans-serif;font-weight:700;font-size:13px;transition:all .3s}
+.logout-btn:hover{background:rgba(239,68,68,.3)}
+.btn-top{padding:10px 18px;border-radius:10px;font-size:14px;font-weight:700;font-family:'Tajawal',sans-serif;border:none;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:8px}
+.btn-top-primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white}
+.btn-top-primary:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(37,99,235,.3)}
+.btn-top-outline{background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.2)}
+.btn-top-outline:hover{background:rgba(255,255,255,.2)}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card-bg);border-radius:16px;padding:20px;box-shadow:var(--shadow);transition:transform .3s}
+.stat-card:hover{transform:translateY(-3px)}
+.stat-card .icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px}
+.stat-card.blue .icon{background:#dbeafe;color:var(--primary)}
+.stat-card.purple .icon{background:#ede9fe;color:var(--secondary)}
+.stat-card.green .icon{background:#d1fae5;color:var(--success)}
+.stat-card.orange .icon{background:#fef3c7;color:var(--warning)}
+.stat-card.red .icon{background:#fee2e2;color:var(--danger)}
+.stat-card h3{font-size:26px;font-weight:800;color:var(--dark)}
+.stat-card p{color:var(--gray);font-size:13px;font-weight:600}
+
+/* Tables */
+.card{background:var(--card-bg);border-radius:20px;padding:24px;box-shadow:var(--shadow);margin-bottom:24px}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.card-header h2{font-size:20px;font-weight:800;color:var(--dark)}
+.search-box{position:relative;width:280px}
+.search-box input{width:100%;padding:10px 14px 10px 40px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:14px;transition:all .3s}
+.search-box input:focus{outline:none;border-color:var(--primary)}
+.search-box i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--gray)}
+.table-container{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{background:#f1f5f9;padding:14px 16px;text-align:right;font-weight:800;font-size:13px;color:var(--gray);border-bottom:2px solid #e2e8f0}
+td{padding:14px 16px;border-bottom:1px solid #f1f5f9;font-size:14px}
+tr:hover td{background:#f8fafc}
+.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+.badge-green{background:#d1fae5;color:#065f46}
+.badge-yellow{background:#fef3c7;color:#92400e}
+.badge-red{background:#fee2e2;color:#991b1b}
+.badge-blue{background:#dbeafe;color:#1e40af}
+.action-btns{display:flex;gap:6px}
+.btn-icon{width:36px;height:36px;border-radius:10px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;font-size:14px}
+.btn-icon-view{background:#dbeafe;color:var(--primary)}
+.btn-icon-view:hover{background:var(--primary);color:white}
+.btn-icon-edit{background:#fef3c7;color:var(--warning)}
+.btn-icon-edit:hover{background:var(--warning);color:white}
+.btn-icon-delete{background:#fee2e2;color:var(--danger)}
+.btn-icon-delete:hover{background:var(--danger);color:white}
+
+/* Teacher Files */
+.profile-card{background:var(--card-bg);border-radius:20px;padding:28px;box-shadow:var(--shadow);margin-bottom:24px;display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center}
+.profile-avatar{width:100px;height:100px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;color:white;font-weight:800;box-shadow:0 10px 30px rgba(37,99,235,.3)}
+.profile-avatar.teacher{background:linear-gradient(135deg,var(--primary),var(--secondary))}
+.profile-details h2{font-size:22px;font-weight:800;margin-bottom:6px}
+.profile-badge{display:inline-block;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;background:#dbeafe;color:var(--primary);margin-bottom:14px}
+.profile-info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.info-item{display:flex;align-items:center;gap:10px}
+.info-item i{color:var(--primary);font-size:16px;width:18px}
+.info-item span{color:var(--gray);font-size:13px}
+.info-item strong{color:var(--dark);font-weight:700;font-size:14px}
+
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.section-header h2{color:white;font-size:20px;font-weight:800}
+.section-header .last-update{color:rgba(255,255,255,.6);font-size:13px}
+
+.files-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.file-card{background:var(--card-bg);border-radius:16px;padding:20px;box-shadow:var(--shadow);transition:all .3s;position:relative;border:2px solid transparent}
+.file-card:hover{transform:translateY(-3px);border-color:var(--primary);box-shadow:var(--shadow-lg)}
+.file-card.new{border-color:var(--warning)}
+.file-card.new::after{content:'جديد';position:absolute;top:-10px;left:16px;background:var(--warning);color:white;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+.file-header{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.file-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.file-icon.pdf{background:#fee2e2;color:var(--danger)}
+.file-icon.doc{background:#dbeafe;color:var(--primary)}
+.file-icon.img{background:#d1fae5;color:var(--success)}
+.file-icon.xls{background:#d1fae5;color:#059669}
+.file-icon.zip{background:#ede9fe;color:var(--secondary)}
+.file-title{font-weight:800;font-size:15px;color:var(--dark)}
+.file-meta{font-size:12px;color:var(--gray);margin-top:3px}
+.file-desc{color:var(--gray);font-size:13px;line-height:1.6;margin-bottom:14px}
+.file-actions{display:flex;gap:8px}
+.btn-sm{padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;font-family:'Tajawal',sans-serif;border:none;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:6px}
+.btn-outline{background:transparent;border:2px solid #e2e8f0;color:var(--gray)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-download{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;flex:1;justify-content:center}
+.btn-download:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(37,99,235,.3)}
+
+/* Modals */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,.7);display:none;justify-content:center;align-items:center;z-index:2000;padding:20px;backdrop-filter:blur(5px)}
+.modal-overlay.active{display:flex}
+.modal{background:var(--card-bg);border-radius:24px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:modalIn .3s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.modal-header{padding:22px 26px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center}
+.modal-header h2{font-size:18px;font-weight:800}
+.modal-close{width:36px;height:36px;border-radius:50%;border:none;background:#f1f5f9;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;font-size:16px;color:var(--gray)}
+.modal-close:hover{background:#fee2e2;color:var(--danger)}
+.modal-body{padding:22px 26px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{margin-bottom:14px}
+.form-group.full{grid-column:1/-1}
+.form-group label{display:block;font-weight:700;color:var(--dark);margin-bottom:5px;font-size:13px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 13px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:14px;transition:all .3s;background:#f8fafc}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);background:white}
+.form-group textarea{min-height:70px;resize:vertical}
+.modal-footer{padding:18px 26px;border-top:1px solid #f1f5f9;display:flex;justify-content:flex-end;gap:10px}
+.btn-modal{padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;font-family:'Tajawal',sans-serif;border:none;cursor:pointer;transition:all .3s}
+.btn-modal-primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white}
+.btn-modal-primary:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(37,99,235,.3)}
+.btn-modal-outline{background:transparent;border:2px solid #e2e8f0;color:var(--gray)}
+.btn-modal-outline:hover{border-color:var(--danger);color:var(--danger)}
+
+/* Loading */
+.loading-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,.9);display:none;justify-content:center;align-items:center;z-index:3000;flex-direction:column;gap:20px}
+.loading-overlay.active{display:flex}
+.spinner{width:60px;height:60px;border:4px solid rgba(255,255,255,.1);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-overlay p{color:white;font-size:18px;font-weight:700}
+
+/* Toast */
+.toast-container{position:fixed;top:24px;left:24px;z-index:4000;display:flex;flex-direction:column;gap:12px}
+.toast{background:var(--card-bg);border-radius:16px;padding:18px 22px;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:14px;min-width:300px;animation:slideIn .4s ease,fadeOut .4s ease 3.5s forwards;border-right:4px solid var(--success)}
+.toast.error{border-right-color:var(--danger)}
+.toast.warning{border-right-color:var(--warning)}
+@keyframes slideIn{from{transform:translateX(-100%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes fadeOut{to{opacity:0;transform:translateX(-100%)}}
+.toast-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+.toast.success .toast-icon{background:#d1fae5;color:var(--success)}
+.toast.error .toast-icon{background:#fee2e2;color:var(--danger)}
+.toast.warning .toast-icon{background:#fef3c7;color:var(--warning)}
+.toast-content h4{font-size:15px;font-weight:800;margin-bottom:2px}
+.toast-content p{font-size:13px;color:var(--gray)}
+
+.empty-state{text-align:center;padding:40px 20px;color:var(--gray)}
+.empty-state i{font-size:48px;margin-bottom:12px;opacity:.5}
+.empty-state h3{color:var(--dark);font-size:18px;margin-bottom:6px}
+
+.tab-content{display:none}
+.tab-content.active{display:block}
+.file-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.file-field{display:flex;flex-direction:column;gap:2px;}
+.field-label{font-size:11px;color:var(--text-secondary);font-weight:600;}
+.field-value{font-size:13px;color:var(--text);}
+.data-table{width:100%;border-collapse:collapse;}
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+select option{background:#1e293b !important;color:#ffffff !important;}
+select{color:#ffffff !important;}
+#recordForm select{background:#1e293b !important;color:#ffffff !important;border:2px solid #4f46e5 !important;}
+.advanced-search-bar{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:18px;display:flex;flex-direction:column;gap:12px;}
+.search-field{position:relative;display:flex;align-items:center;}
+.search-field .search-icon{position:absolute;right:14px;color:var(--text-secondary);font-size:14px;pointer-events:none;}
+.search-field input{width:100%;padding:10px 40px 10px 14px;border-radius:10px;border:1px solid var(--border);background:#0f172a;color:var(--text);font-family:inherit;font-size:13px;transition:border 0.2s;}
+.search-field input:focus{outline:none;border-color:var(--primary);}
+.filter-group{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;}
+.filter-field{display:flex;flex-direction:column;gap:5px;flex:1;min-width:140px;}
+.filter-field label{font-size:11px;color:var(--text-secondary);font-weight:600;display:flex;align-items:center;gap:5px;}
+.filter-field select{padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:#0f172a;color:var(--text);font-family:inherit;font-size:13px;cursor:pointer;transition:border 0.2s;}
+.filter-field select:focus{outline:none;border-color:var(--primary);}
+.reset-btn{padding:9px 16px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-secondary);font-family:inherit;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.2s;white-space:nowrap;}
+.reset-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary);}
+.data-table th{background:#4f46e5;color:#ffffff !important;padding:12px 14px;text-align:right;font-size:13px;font-weight:600;}
+.data-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:#f1f5f9 !important;font-size:13px;background:transparent;}
+.data-table tbody tr:hover td{background:rgba(99,102,241,0.12) !important;}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-secondary);}
+.empty-state i{font-size:48px;margin-bottom:16px;opacity:0.4;display:block;}
+.empty-state p{font-size:16px;}
+
+@media(max-width:768px){
+.sidebar{transform:translateX(100%)}
+.main-content{margin-right:0;padding:16px}
+.form-grid{grid-template-columns:1fr}
+.search-box{width:100%}
+.top-bar{flex-direction:column;gap:12px}
+.stats-grid{grid-template-columns:1fr 1fr}
+.role-grid{grid-template-columns:1fr}
+.profile-card{grid-template-columns:1fr;text-align:center}
+.files-grid{grid-template-columns:1fr}
+}
+</style>
+
+</head>
+<body>
+<div class="bg-animation"><div class="circle"></div><div class="circle"></div><div class="circle"></div></div>
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><p>جاري التحميل...</p></div>
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ====== صفحة البوابة الرئيسية ====== -->
+<div class="page active" id="gatewayPage">
+<div class="gateway-card">
+<div class="gateway-logo"><i class="fas fa-graduation-cap"></i></div>
+<h1>منصة الأساتذة الذكية</h1>
+<p>اختر طريقة الدخول المناسبة لك</p>
+
+<div class="role-grid">
+<div class="role-card teacher-role" onclick="goToTeacherLogin()">
+<div class="role-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+<h3>أستاذ</h3>
+<span>تصفح ملفاتك ومستجداتك</span>
+</div>
+<div class="role-card admin-role" onclick="goToAdminLogin()">
+<div class="role-icon"><i class="fas fa-shield-alt"></i></div>
+<h3>أدمن</h3>
+<span>إدارة الأساتذة والملفات</span>
+</div>
+</div>
+
+<div style="margin-top:20px;padding:14px;background:#f0f9ff;border-radius:10px;text-align:right;">
+
+</div>
+</div>
+</div>
+
+<!-- ====== دخول الأستاذ ====== -->
+<div class="page" id="teacherLoginPage">
+<div class="gateway-card">
+<button class="back-btn" onclick="backToGateway()"><i class="fas fa-arrow-right"></i> رجوع للبوابة</button>
+<div class="gateway-logo" style="background:linear-gradient(135deg,var(--primary),var(--secondary));"><i class="fas fa-chalkboard-teacher"></i></div>
+<h1>دخول الأستاذ</h1>
+<p style="color:var(--gray);font-size:15px;margin-bottom:24px;">أدخل رقم بطاقتك الوطنية للدخول</p>
+
+<div class="alert error" id="teacherLoginError">
+<i class="fas fa-exclamation-circle"></i><span>رقم البطاقة غير صحيح.</span>
+</div>
+
+<div class="input-group">
+<label for="teacherCardInput">رقم البطاقة الوطنية</label>
+<input type="text" id="teacherCardInput" placeholder="أدخل رقم الضمان الاجتماعي" maxlength="20" autocomplete="off">
+<i class="fas fa-id-card"></i>
+</div>
+
+<button class="btn btn-primary" id="teacherLoginBtn" onclick="teacherLogin()">
+<i class="fas fa-sign-in-alt"></i> دخول
+</button>
+</div>
+</div>
+
+<!-- ====== دخول الأدمن ====== -->
+<div class="page" id="adminLoginPage">
+<div class="gateway-card">
+<button class="back-btn" onclick="backToGateway()"><i class="fas fa-arrow-right"></i> رجوع للبوابة</button>
+<div class="gateway-logo" style="background:linear-gradient(135deg,var(--danger),var(--warning));"><i class="fas fa-shield-alt"></i></div>
+<h1>دخول الأدمن</h1>
+<p style="color:var(--gray);font-size:15px;margin-bottom:24px;">أدخل كلمة المرور</p>
+
+<div class="alert error" id="adminLoginError">
+<i class="fas fa-exclamation-circle"></i><span>كلمة المرور غير صحيحة.</span>
+</div>
+
+<div class="input-group">
+<label for="adminPasswordInput">كلمة المرور</label>
+<input type="password" id="adminPasswordInput" placeholder="كلمة المرور">
+<i class="fas fa-lock"></i>
+</div>
+
+<button class="btn btn-danger" id="adminLoginBtn" onclick="adminLogin()">
+<i class="fas fa-sign-in-alt"></i> دخول
+</button>
+</div>
+</div>
+
+<!-- ====== لوحة التحكم ====== -->
+<div class="dashboard" id="dashboard">
+<div class="sidebar" id="sidebar">
+<div class="sidebar-brand">
+<div class="logo-small" id="sidebarLogo"><i class="fas fa-graduation-cap"></i></div>
+<h2 id="sidebarTitle">منصة الأساتذة</h2>
+</div>
+<div id="teacherNav">
+<div class="nav-item active" id="navMoalafat" onclick="showTeacherTab('moalafat', this)"><i class="fas fa-book"></i><span>المؤلفات البيداغوجية</span></div>
+<div class="nav-item" id="navTarbossat" onclick="showTeacherTab('tarbossat', this)"><i class="fas fa-briefcase"></i><span>ملف التربصات</span></div>
+<div class="nav-item" id="navProfile" onclick="showTeacherTab('profile', this)"><i class="fas fa-user"></i><span>ملفي الشخصي</span></div>
+</div>
+<div id="adminNav" style="display:none;">
+<div class="nav-item active" onclick="showAdminTab('teachers')" id="navTeachers"><i class="fas fa-users"></i><span>الأساتذة</span></div>
+<div class="nav-item" onclick="showAdminTab('moalafat')" id="navMoalafat"><i class="fas fa-book"></i><span>المؤلفات</span></div>
+<div class="nav-item" onclick="showAdminTab('tarbossat')" id="navTarbossat"><i class="fas fa-briefcase"></i><span>التربصات</span></div>
+<div class="nav-item" onclick="showAdminTab('logs')" id="navLogs"><i class="fas fa-history"></i><span>سجل الدخول</span></div>
+<div class="nav-item" onclick="showAdminTab('files')" id="navFiles"><i class="fas fa-folder-open"></i><span>الملفات</span></div>
+<div class="nav-item" onclick="showAdminTab('stats')" id="navStats"><i class="fas fa-chart-pie"></i><span>الإحصائيات</span></div>
+</div>
+<div style="margin-top:auto;padding-top:20px;border-top:1px solid rgba(255,255,255,.1);">
+<div class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i><span>تسجيل الخروج</span></div>
+</div>
+</div>
+
+<div class="main-content">
+<div class="top-bar">
+<h1 id="pageTitle"><i class="fas fa-home" style="margin-left:10px;color:var(--accent);"></i> لوحة التحكم</h1>
+<div style="display:flex;align-items:center;gap:12px;">
+<div class="actions" id="adminActions">
+<button class="btn-top btn-top-outline" onclick="refreshData()"><i class="fas fa-sync-alt"></i> تحديث</button>
+<button class="btn-top btn-top-primary" onclick="openAddModal()" id="addBtn"><i class="fas fa-plus"></i> إضافة</button>
+</div>
+<div class="user-info">
+<div><div class="user-name" id="userName">---</div><div class="user-role" id="userRole">---</div></div>
+<div class="user-avatar" id="userAvatar">-</div>
+<button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+</div>
+</div>
+</div>
+
+<!-- محتوى الأستاذ -->
+<div id="teacherContent">
+<div class="stats-grid" id="teacherStats">
+<div class="stat-card blue"><div class="icon"><i class="fas fa-folder"></i></div><h3 id="tTotalFiles">0</h3><p>إجمالي الملفات</p></div>
+<div class="stat-card purple"><div class="icon"><i class="fas fa-clock"></i></div><h3 id="tPendingFiles">0</h3><p>تحت المعالجة</p></div>
+<div class="stat-card green"><div class="icon"><i class="fas fa-check-circle"></i></div><h3 id="tCompletedFiles">0</h3><p>مكتملة</p></div>
+<div class="stat-card orange"><div class="icon"><i class="fas fa-bell"></i></div><h3 id="tNewUpdates">0</h3><p>مستجدات جديدة</p></div>
+</div>
+<div class="profile-card" id="teacherProfileCard" style="display:none;">
+<div class="profile-avatar teacher" id="tProfileAvatar">-</div>
+<div class="profile-details">
+<h2 id="tProfileName">---</h2>
+<span class="profile-badge" id="tProfileDept">---</span>
+<div class="profile-info-grid">
+<div class="info-item"><i class="fas fa-id-card"></i><div><span>رقم البطاقة</span><br><strong id="tProfileCard">---</strong></div></div>
+<div class="info-item"><i class="fas fa-award"></i><div><span>الرتبة العلمية</span><br><strong id="tProfileEmail">---</strong></div></div>
+<div class="info-item"><i class="fas fa-building"></i><div><span>القسم</span><br><strong id="tProfilePhone">---</strong></div></div>
+
+</div>
+</div>
+</div>
+<div class="section-header">
+<h2><i class="fas fa-folder-open" style="margin-left:10px;color:var(--primary);"></i> ملفاتي ووثائقي</h2>
+<span class="last-update">آخر تحديث: <span id="lastUpdate">---</span></span>
+</div>
+<div class="files-grid" id="teacherFilesGrid"></div>
+<div class="empty-state" id="teacherEmpty" style="display:none;"><i class="fas fa-inbox"></i><h3>لا توجد ملفات</h3><p>سيتم إضافة ملفاتك قريباً</p></div>
+</div>
+
+<!-- محتوى الأدمن -->
+<div id="adminContent" style="display:none;">
+<div class="tab-content" id="tabMoalafat"></div>
+<div class="tab-content" id="tabTarbossat"></div>
+<div class="tab-content" id="tabLogs">
+  <div style="margin-bottom:16px">
+    <button onclick="testLog()" style="padding:10px 20px;background:#6366f1;color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px;margin-left:10px">
+      <i class="fas fa-vial"></i> اختبار الاتصال
+    </button>
+    <button onclick="renderLogs()" style="padding:10px 20px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px">
+      <i class="fas fa-sync"></i> تحديث السجل
+    </button>
+  </div>
+</div>
+<div class="tab-content active" id="tabStats">
+<div class="stats-grid">
+<div class="stat-card blue"><div class="icon"><i class="fas fa-users"></i></div><h3 id="aStatTeachers">0</h3><p>إجمالي الأساتذة</p></div>
+<div class="stat-card purple"><div class="icon"><i class="fas fa-folder"></i></div><h3 id="aStatFiles">0</h3><p>إجمالي الملفات</p></div>
+<div class="stat-card orange"><div class="icon"><i class="fas fa-clock"></i></div><h3 id="aStatPending">0</h3><p>قيد المراجعة</p></div>
+<div class="stat-card green"><div class="icon"><i class="fas fa-bell"></i></div><h3 id="aStatNew">0</h3><p>مستجدات جديدة</p></div>
+<div class="stat-card red"><div class="icon"><i class="fas fa-exclamation-triangle"></i></div><h3 id="aStatNoFiles">0</h3><p>بدون ملفات</p></div>
+</div>
+</div>
+<div class="tab-content" id="tabTeachers">
+<div class="card">
+<div class="card-header"><h2>قائمة الأساتذة</h2><div class="search-box"><input type="text" id="teacherSearch" placeholder="بحث..." oninput="filterTeachers()"><i class="fas fa-search"></i></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;margin-bottom:16px;align-items:end;">
+  <div>
+    <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">بحث بالاسم أو الرقم</label>
+    <input type="text" id="teacherSearch" placeholder="ابحث..." oninput="filterTeachers()" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--card-bg);color:var(--text);font-size:13px;">
+  </div>
+  <div>
+    <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">القسم</label>
+    <select id="filterDept" onchange="filterByDept()" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--card-bg);color:var(--text);font-size:13px;">
+      <option value="">كل الأقسام</option>
+    </select>
+  </div>
+  <div>
+    <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">الرتبة العلمية</label>
+    <select id="filterRank" onchange="filterByDept()" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--card-bg);color:var(--text);font-size:13px;">
+      <option value="">كل الرتب</option>
+    </select>
+  </div>
+  <button onclick="resetFilters()" style="padding:9px 16px;background:var(--border);border:none;border-radius:8px;color:var(--text);cursor:pointer;font-size:13px;white-space:nowrap;"><i class="fas fa-redo"></i> إعادة تعيين</button>
+</div>
+<div class="table-container"><table><thead><tr><th>رقم الضمان</th><th>الاسم واللقب</th><th>الرتبة العلمية</th><th>القسم</th><th>الملفات</th></tr></thead><tbody id="teachersTable"></tbody></table><div class="empty-state" id="teachersEmpty" style="display:none;"><i class="fas fa-users"></i><h3>لا يوجد أساتذة</h3></div></div>
+</div>
+</div>
+<div class="tab-content" id="tabFiles">
+<div class="card">
+<div class="card-header"><h2>جميع الملفات</h2><div class="search-box"><input type="text" id="fileSearch" placeholder="بحث..." oninput="filterFiles()"><i class="fas fa-search"></i></div></div>
+<div class="table-container"><table><thead><tr><th>المعرف</th><th>الأستاذ</th><th>العنوان</th><th>النوع</th><th>الحالة</th><th>التاريخ</th><th>إجراءات</th></tr></thead><tbody id="filesTable"></tbody></table><div class="empty-state" id="filesEmpty" style="display:none;"><i class="fas fa-folder-open"></i><h3>لا توجد ملفات</h3></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ====== النوافذ المنبثقة ====== -->
+<div class="modal-overlay" id="teacherModal">
+<div class="modal">
+<div class="modal-header"><h2 id="teacherModalTitle">إضافة أستاذ</h2><button class="modal-close" onclick="closeModal('teacherModal')"><i class="fas fa-times"></i></button></div>
+<div class="modal-body">
+<div class="form-grid">
+<div class="form-group"><label>رقم البطاقة *</label><input type="text" id="tCardNumber"></div>
+<div class="form-group"><label>الاسم *</label><input type="text" id="tName"></div>
+<div class="form-group"><label>اللقب</label><input type="text" id="tTitle"></div>
+<div class="form-group"><label>القسم</label><input type="text" id="tDepartment"></div>
+<div class="form-group"><label>البريد</label><input type="email" id="tEmail"></div>
+<div class="form-group"><label>الهاتف</label><input type="text" id="tPhone"></div>
+<div class="form-group"><label>تاريخ الانضمام</label><input type="date" id="tJoinDate"></div>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn-modal btn-modal-outline" onclick="closeModal('teacherModal')">إلغاء</button>
+<button class="btn-modal btn-modal-primary" onclick="saveTeacher()"><i class="fas fa-save" style="margin-left:6px;"></i> حفظ</button>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="fileModal">
+<div class="modal">
+<div class="modal-header"><h2 id="fileModalTitle">إضافة ملف</h2><button class="modal-close" onclick="closeModal('fileModal')"><i class="fas fa-times"></i></button></div>
+<div class="modal-body">
+<div class="form-grid">
+<div class="form-group full"><label>الأستاذ *</label><select id="fCardNumber"><option value="">اختر أستاذ...</option></select></div>
+<div class="form-group full"><label>عنوان الملف *</label><input type="text" id="fTitle"></div>
+<div class="form-group"><label>النوع</label><select id="fType"><option value="pdf">PDF</option><option value="doc">Word</option><option value="img">صورة</option><option value="xls">Excel</option><option value="zip">مضغوط</option></select></div>
+<div class="form-group"><label>الحالة</label><select id="fStatus"><option value="مكتمل">مكتمل</option><option value="قيد المراجعة">قيد المراجعة</option><option value="مرفوض">مرفوض</option></select></div>
+<div class="form-group"><label>التاريخ</label><input type="date" id="fDate"></div>
+<div class="form-group"><label>جديد؟</label><select id="fIsNew"><option value="TRUE">نعم</option><option value="FALSE">لا</option></select></div>
+<div class="form-group full"><label>الوصف</label><textarea id="fDescription"></textarea></div>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn-modal btn-modal-outline" onclick="closeModal('fileModal')">إلغاء</button>
+<button class="btn-modal btn-modal-primary" onclick="saveFile()"><i class="fas fa-save" style="margin-left:6px;"></i> حفظ</button>
+</div>
+</div>
+</div>
+
+<!-- teacher modal -->
+<div class="modal-overlay" id="teacherModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="teacherModalTitle">إضافة أستاذ</h3>
+      <button class="modal-close" onclick="closeModal('teacherModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label>رقم الضمان الاجتماعي *</label><input type="text" id="tCardNumber" placeholder="أدخل رقم الضمان"></div>
+      <div class="form-group"><label>الاسم واللقب *</label><input type="text" id="tName" placeholder="الاسم الكامل"></div>
+      <div class="form-group"><label>الرتبة العلمية</label><input type="text" id="tRank" placeholder="مثال: بروفيسور"></div>
+      <div class="form-group"><label>القسم</label><input type="text" id="tDept" placeholder="مثال: قسم العربية"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('teacherModal')">إلغاء</button>
+      <button class="btn-primary" onclick="saveTeacher()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- record modal -->
+<div class="modal-overlay" id="recordModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="recordModalTitle">إضافة سجل</h3>
+      <button class="modal-close" onclick="closeModal('recordModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="recordForm"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('recordModal')">إلغاء</button>
+      <button class="btn-primary" onclick="saveRecord()"><i class="fas fa-save"></i> حفظ</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="deleteModal">
+<div class="modal" style="max-width:400px;">
+<div class="modal-header"><h2 style="color:var(--danger);"><i class="fas fa-exclamation-triangle" style="margin-left:8px;"></i> تأكيد الحذف</h2><button class="modal-close" onclick="closeModal('deleteModal')"><i class="fas fa-times"></i></button></div>
+<div class="modal-body"><p id="deleteMessage" style="font-size:15px;color:var(--gray);line-height:1.7;">هل أنت متأكد؟</p></div>
+<div class="modal-footer">
+<button class="btn-modal btn-modal-outline" onclick="closeModal('deleteModal')">إلغاء</button>
+<button class="btn-modal btn-modal-primary" style="background:var(--danger);" onclick="doDelete()"><i class="fas fa-trash" style="margin-left:6px;"></i> حذف</button>
+</div>
+</div>
+</div>
+<script>
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzn6mWMqg9Skt-gZYTNVrIkemShkGUwZR3eaIph8nCJoNYXo_RqIyj1dliAnhZ68F-EjQ/exec';
+var SHEET_TEACHERS  = 'Teachers';
+var SHEET_MOALAFAT  = 'المؤلفات_البيداغوجية';
+var SHEET_TARBOSSAT = 'ملف_التربصات';
+var SHEET_LOG       = 'سجل_الدخول';
+var ADMIN_PASSWORD  = 'admin123';
+var FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf' + 
+  '1jH4g5Tq_m7bSSWJigq3lbzhbr2ESdy4OyQEw9NEQGaY/formResponse';
+var FORM_ENTRY_NAME = 'entry.2086374978';
+var FORM_ENTRY_CN   = 'entry.333919365';
+var COL_CN          = 'رقم الضمان';
+
+var allTeachers=[], allMoalafat=[], allTarbossat=[], allLogs=[];
+var currentRole='', currentUser=null, dataSource='demo', currentAdminTab='teachers';
+var editingTeacher=null, editingRecord=null, editingSheet=null;
+
+var DEMO_TEACHERS=[{cardNumber:'1986',name:'سيدي إدريس عمار',rank:'بروفيسور',department:'العربية'}];
+
+// ============================================
+// API: قراءة وكتابة
+// ============================================
+function apiGet(sheet){
+  return fetch(APPS_SCRIPT_URL+'?action=read&sheet='+encodeURIComponent(sheet))
+    .then(function(r){return r.json();})
+    .then(function(d){return Array.isArray(d)?d:[];});
+}
+
+function apiPost(body){
+  // نشفّر البيانات كـ base64 ونرسلها عبر GET لتجاوز CORS
+  var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(body))));
+  var url = APPS_SCRIPT_URL + '?method=post&data=' + encodeURIComponent(encoded);
+  return fetch(url, {redirect:'follow'})
+    .then(function(r){ return r.json(); });
+}
+
+function apiLog(name, cn){
+  // إرسال بيانات الدخول عبر Google Forms مباشرة إلى الشيت
+  var now  = new Date();
+  var date = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  var time = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0');
+  
+  var fullName = (name||'') + ' | ' + date + ' | ' + time;
+  
+  var url = 'https://docs.google.com/forms/d/e/1FAIpQLSdHkFt_m7bSSWJigq3lbzhbr2ESdy4OyQEw9NEQGaY/formResponse';
+  var params = FORM_ENTRY_NAME + '=' + encodeURIComponent(name||'') +
+               '&' + FORM_ENTRY_CN + '=' + encodeURIComponent(cn||'') +
+               '&submit=Submit';
+  
+  // إرسال عبر fetch مع no-cors (Forms يقبله)
+  fetch('https://docs.google.com/forms/d/e/1FAIpQLSf1jH4g5Tq_m7bSSWJigq3lbzhbr2ESdy4OyQEw9NEQGaY/formResponse', {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: FORM_ENTRY_NAME + '=' + encodeURIComponent(name||'') +
+          '&' + FORM_ENTRY_CN + '=' + encodeURIComponent(cn||'')
+  }).then(function(){ console.log('✅ تم تسجيل الدخول عبر Forms'); })
+    .catch(function(e){ console.warn('Forms error:', e); });
+}
+
+function getCN(row){
+  // أولوية للعمود المسمى بالضبط - لا نأخذ Object.values()[0] إلا إذا كان فيه قيمة حقيقية
+  var cn = row[COL_CN] || row['رقم الضمان الاجتماعي'] || row['cardNumber'] || '';
+  if(!cn){
+    var first = Object.values(row)[0]||'';
+    // نقبل القيمة الأولى فقط إذا كانت رقماً أو نصاً غير فارغ
+    cn = String(first).trim();
+  }
+  return String(cn).trim();
+}
+
+// ============================================
+// تحميل البيانات
+// ============================================
+function loadAllData(){
+  var ov=document.getElementById('loadingOverlay');
+  if(ov) ov.classList.add('active');
+  return Promise.all([
+    apiGet(SHEET_TEACHERS), apiGet(SHEET_MOALAFAT),
+    apiGet(SHEET_TARBOSSAT), apiGet(SHEET_LOG)
+  ]).then(function(res){
+    allTeachers  = res[0].length>0 ? res[0].map(mapTeacher).filter(function(t){return t.cardNumber;}) : DEMO_TEACHERS.slice();
+    allMoalafat  = res[1]||[];
+    allTarbossat = res[2]||[];
+    allLogs      = res[3]||[];
+    dataSource   = res[0].length>0?'sheets':'demo';
+    if(ov) ov.classList.remove('active');
+    showToast('success','جاهز','تم تحميل '+allTeachers.length+' أستاذ');
+    populateFilters();
+  }).catch(function(){
+    allTeachers=DEMO_TEACHERS.slice(); dataSource='demo';
+    if(ov) ov.classList.remove('active');
+    showToast('warning','تنبيه','يعمل بالبيانات التجريبية');
+  });
+}
+
+function mapTeacher(r){
+  return {
+    cardNumber:String(r['رقم الضمان']||Object.values(r)[0]||'').trim(),
+    name:String(r['الاسم واللقب']||Object.values(r)[1]||'').trim(),
+    rank:String(r['الرتبة']||Object.values(r)[2]||'').trim(),
+    department:String(r['القسم']||Object.values(r)[3]||'').trim()
+  };
+}
+
+function getTeacherName(cn){
+  var t=allTeachers.find(function(x){return x.cardNumber===String(cn).trim();});
+  return t?t.name:cn;
+}
+
+function getTeacherFiles(cn){
+  return {
+    moalafat:allMoalafat.filter(function(r){return getCN(r)===cn;}),
+    tarbossat:allTarbossat.filter(function(r){return getCN(r)===cn;})
+  };
+}
+
+// ============================================
+// التنقل
+// ============================================
+function showPage(id){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('dashboard').classList.remove('active');
+  if(id){var el=document.getElementById(id);if(el)el.classList.add('active');}
+}
+function goToTeacherLogin(){currentRole='teacher';showPage('teacherLoginPage');setTimeout(function(){var i=document.getElementById('teacherCardInput');if(i)i.focus();},100);}
+function goToAdminLogin(){currentRole='admin';showPage('adminLoginPage');setTimeout(function(){var i=document.getElementById('adminPasswordInput');if(i)i.focus();},100);}
+function backToGateway(){
+  currentRole='';currentUser=null;showPage('gatewayPage');
+  ['teacherLoginError','adminLoginError'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});
+  ['teacherCardInput','adminPasswordInput'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+}
+function showErr(id,msg){var d=document.getElementById(id);if(d){d.querySelector('span').textContent=msg;d.style.display='flex';}}
+
+// ============================================
+// دخول
+// ============================================
+function teacherLogin(){
+  var cn=document.getElementById('teacherCardInput').value.trim();
+  var ov=document.getElementById('loadingOverlay');var btn=document.getElementById('teacherLoginBtn');
+  document.getElementById('teacherLoginError').style.display='none';
+  if(!cn){showErr('teacherLoginError','أدخل رقم الضمان الاجتماعي');return;}
+  if(ov)ov.classList.add('active');if(btn)btn.disabled=true;
+  var doLogin=function(){
+    var t=allTeachers.find(function(x){return x.cardNumber===cn;});
+    if(ov)ov.classList.remove('active');if(btn)btn.disabled=false;
+    if(!t){showErr('teacherLoginError',dataSource==='sheets'?'رقم الضمان غير موجود':'رقم الضمان غير صحيح. جرب: 1986');return;}
+    currentUser=Object.assign({},t,getTeacherFiles(cn));
+    apiLog(t.name,cn);
+    enterDashboard();
+    showToast('success','مرحباً','أهلاً '+t.name);
+    setTimeout(function(){checkNotifs(cn,currentUser.moalafat,currentUser.tarbossat);},1500);
+  };
+  if(allTeachers.length===0){loadAllData().then(doLogin);}else{setTimeout(doLogin,300);}
+}
+
+function adminLogin(){
+  var pw=document.getElementById('adminPasswordInput').value;
+  var ov=document.getElementById('loadingOverlay');var btn=document.getElementById('adminLoginBtn');
+  document.getElementById('adminLoginError').style.display='none';
+  if(!pw){showErr('adminLoginError','أدخل كلمة المرور');return;}
+  if(pw!==ADMIN_PASSWORD){showErr('adminLoginError','كلمة المرور غير صحيحة');return;}
+  if(ov)ov.classList.add('active');if(btn)btn.disabled=true;
+  var after=function(){if(ov)ov.classList.remove('active');if(btn)btn.disabled=false;enterDashboard();showToast('success','أهلاً','لوحة تحكم الأدمن');};
+  if(allTeachers.length===0){loadAllData().then(after);}else{setTimeout(after,300);}
+}
+
+function enterDashboard(){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('dashboard').classList.add('active');
+  if(currentRole==='teacher')setupTeacherDashboard();else setupAdminDashboard();
+}
+function logout(){currentRole='';currentUser=null;document.getElementById('dashboard').classList.remove('active');backToGateway();}
+
+// ============================================
+// لوحة الأستاذ
+// ============================================
+function setupTeacherDashboard(){
+  document.getElementById('teacherNav').style.display='block';
+  document.getElementById('adminNav').style.display='none';
+  document.getElementById('adminActions').style.display='none';
+  document.getElementById('sidebarLogo').className='logo-small teacher';
+  document.getElementById('sidebarTitle').textContent='منصة الأساتذة';
+  document.getElementById('teacherContent').style.display='block';
+  document.getElementById('adminContent').style.display='none';
+  document.getElementById('userName').textContent=currentUser.name;
+  document.getElementById('userRole').textContent=currentUser.department;
+  document.getElementById('userAvatar').textContent=currentUser.name.charAt(0);
+  document.getElementById('userAvatar').className='user-avatar teacher';
+  var m=(currentUser.moalafat||[]).length, tr=(currentUser.tarbossat||[]).length;
+  document.getElementById('tTotalFiles').textContent=m+tr;
+  document.getElementById('tCompletedFiles').textContent=m;
+  document.getElementById('tPendingFiles').textContent=tr;
+  document.getElementById('tNewUpdates').textContent=0;
+  document.getElementById('lastUpdate').textContent=new Date().toLocaleDateString('ar-DZ');
+  document.getElementById('tProfileAvatar').textContent=currentUser.name.charAt(0);
+  document.getElementById('tProfileName').textContent=currentUser.name;
+  document.getElementById('tProfileDept').textContent=currentUser.department+' - '+currentUser.rank;
+  document.getElementById('tProfileCard').textContent=currentUser.cardNumber;
+  document.getElementById('tProfileEmail').textContent=currentUser.rank||'---';
+  document.getElementById('tProfilePhone').textContent=currentUser.department||'---';
+  document.getElementById('tProfileJoin').textContent='---';
+  showTeacherTab('moalafat',document.getElementById('navMoalafat'));
+}
+
+function showTeacherTab(tab,el){
+  document.querySelectorAll('#teacherNav .nav-item').forEach(function(i){i.classList.remove('active');});
+  if(el)el.classList.add('active');
+  document.getElementById('teacherStats').style.display=tab==='profile'?'none':'grid';
+  document.getElementById('teacherProfileCard').style.display=tab==='profile'?'grid':'none';
+  document.getElementById('teacherFilesGrid').style.display='none';
+  document.getElementById('teacherEmpty').style.display='none';
+  var titles={moalafat:'المؤلفات البيداغوجية',tarbossat:'ملف التربصات',profile:'ملفي الشخصي'};
+  document.getElementById('pageTitle').innerHTML='<i class="fas fa-folder-open" style="margin-left:10px;color:var(--accent);"></i>'+(titles[tab]||tab);
+  if(tab==='profile')return;
+  renderTeacherCards(tab==='moalafat'?(currentUser.moalafat||[]):(currentUser.tarbossat||[]),tab);
+}
+
+var COLS={
+  moalafat:['صفة المؤلف','تاريخ المجلس','التوزيع','حالة التقارير','اعتماد المجلس','ملاحظة'],
+  tarbossat:['مجموع النقاط','الوجهة','حالة الملف','ملاحظة']
+};
+var SC={'مقبول':'#10b981','معتمد':'#10b981','تم':'#10b981','جيد':'#10b981','مرفوض':'#ef4444','قيد المراجعة':'#f59e0b','في الانتظار':'#f59e0b','جاري التوزيع':'#f59e0b'};
+
+function renderTeacherCards(rows,tab){
+  var grid=document.getElementById('teacherFilesGrid'),empty=document.getElementById('teacherEmpty');
+  if(!rows||!rows.length){grid.style.display='none';empty.style.display='block';return;}
+  grid.style.display='grid';empty.style.display='none';
+  var cols=COLS[tab]||[];
+  grid.innerHTML=rows.map(function(row,idx){
+    var fields=cols.map(function(col){
+      var val=row[col]||'---';var c=SC[val];
+      return '<div class="file-field"><span class="field-label">'+col+'</span><span class="field-value"'+(c?' style="color:'+c+';font-weight:600"':'')+'>'+val+'</span></div>';
+    }).join('');
+    return '<div class="file-card"><div class="file-header">'+
+      '<div class="file-icon pdf"><i class="fas '+(tab==='moalafat'?'fa-book':'fa-briefcase')+'"></i></div>'+
+      '<div><div class="file-title">'+(tab==='moalafat'?'مؤلف بيداغوجي':'تربص')+' #'+(idx+1)+'</div>'+
+      '<div class="file-meta">'+new Date().toLocaleDateString('ar-DZ')+'</div></div></div>'+
+      '<div class="file-fields">'+fields+'</div></div>';
+  }).join('');
+}
+
+// ============================================
+// الإشعارات
+// ============================================
+function checkNotifs(cn,moalafat,tarbossat){
+  if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
+  var key='notif_'+cn, seen=JSON.parse(localStorage.getItem(key)||'{}'), newItems=[];
+  moalafat.forEach(function(r,i){var h='m'+i+'_'+(r['حالة التقارير']||'');if(!seen[h]){newItems.push('مؤلف: '+(r['صفة المؤلف']||'')+' — '+(r['حالة التقارير']||''));seen[h]=true;}});
+  tarbossat.forEach(function(r,i){var h='t'+i+'_'+(r['حالة الملف']||'');if(!seen[h]){newItems.push('تربص: '+(r['الوجهة']||'')+' — '+(r['حالة الملف']||''));seen[h]=true;}});
+  localStorage.setItem(key,JSON.stringify(seen));
+  if(newItems.length>0){
+    showInAppNotif(newItems);
+    document.getElementById('tNewUpdates').textContent=newItems.length;
+    if(Notification.permission==='granted') new Notification('📋 منصة الأساتذة',{body:newItems.length+' تحديث في ملفاتك',dir:'rtl'});
+  }
+}
+function closeNotifPanel(){var p=document.getElementById('notifPanel');if(p)p.remove();}
+function showInAppNotif(items){
+  closeNotifPanel();
+  var p=document.createElement('div');p.id='notifPanel';
+  p.style.cssText='position:fixed;top:80px;left:20px;z-index:9999;background:#1e293b;border:1px solid #6366f1;border-radius:16px;padding:20px;width:320px;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:slideIn .3s ease';
+  p.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'+
+    '<h4 style="color:#818cf8;margin:0;font-size:15px">🔔 تحديثات جديدة</h4>'+
+    '<button onclick="closeNotifPanel()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:20px">×</button></div>'+
+    items.map(function(i){return '<div style="background:#0f172a;border-radius:10px;padding:10px;margin-bottom:8px;border-right:3px solid #6366f1;font-size:13px;color:#e2e8f0">'+i+'</div>';}).join('')+
+    '<button onclick="closeNotifPanel()" style="width:100%;margin-top:8px;padding:8px;background:#6366f1;color:#fff;border:none;border-radius:8px;cursor:pointer">حسناً</button>';
+  document.body.appendChild(p);
+  setTimeout(function(){if(p.parentNode)p.remove();},10000);
+}
+
+// ============================================
+// لوحة الأدمن
+// ============================================
+function setupAdminDashboard(){
+  document.getElementById('teacherNav').style.display='none';
+  document.getElementById('adminNav').style.display='block';
+  document.getElementById('adminActions').style.display='flex';
+  document.getElementById('sidebarLogo').className='logo-small admin';
+  document.getElementById('sidebarTitle').textContent='لوحة الأدمن';
+  document.getElementById('teacherContent').style.display='none';
+  document.getElementById('adminContent').style.display='block';
+  document.getElementById('userName').textContent='مدير النظام';
+  document.getElementById('userRole').textContent='أدمن';
+  document.getElementById('userAvatar').textContent='أ';
+  document.getElementById('userAvatar').className='user-avatar admin';
+  showAdminTab('teachers');
+}
+
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+function showAdminTab(tab){
+  currentAdminTab=tab;
+  document.querySelectorAll('#adminNav .nav-item').forEach(function(i){i.classList.remove('active');});
+  var ne=document.getElementById('nav'+cap(tab));if(ne)ne.classList.add('active');
+  document.querySelectorAll('#adminContent .tab-content').forEach(function(t){t.classList.remove('active');});
+  var te=document.getElementById('tab'+cap(tab));if(te)te.classList.add('active');
+  var titles={teachers:'إدارة الأساتذة',moalafat:'المؤلفات البيداغوجية',tarbossat:'ملف التربصات',logs:'سجل الدخول',stats:'الإحصائيات'};
+  var iconMap={teachers:'fa-users',moalafat:'fa-book',tarbossat:'fa-briefcase',logs:'fa-history',stats:'fa-chart-pie'};
+  document.getElementById('pageTitle').innerHTML='<i class="fas '+(iconMap[tab]||'fa-table')+'" style="margin-left:10px;color:var(--accent);"></i> '+(titles[tab]||tab);
+  var addBtn=document.getElementById('addBtn');
+  if(addBtn){
+    if(tab==='teachers'){addBtn.style.display='flex';addBtn.innerHTML='<i class="fas fa-plus"></i> إضافة أستاذ';addBtn.onclick=function(){openTeacherModal();};}
+    else if(tab==='moalafat'){addBtn.style.display='flex';addBtn.innerHTML='<i class="fas fa-plus"></i> إضافة مؤلف';addBtn.onclick=function(){openRecordModal('moalafat');};}
+    else if(tab==='tarbossat'){addBtn.style.display='flex';addBtn.innerHTML='<i class="fas fa-plus"></i> إضافة تربص';addBtn.onclick=function(){openRecordModal('tarbossat');};}
+    else addBtn.style.display='none';
+  }
+  if(tab==='teachers')renderAdminTeachers();
+  else if(tab==='moalafat')renderAdminTable(allMoalafat,'tabMoalafat',COLS.moalafat,'moalafat');
+  else if(tab==='tarbossat')renderAdminTable(allTarbossat,'tabTarbossat',COLS.tarbossat,'tarbossat');
+  else if(tab==='logs')renderLogs();
+  else if(tab==='stats')renderStats();
+}
+
+function populateFilters(){
+  var ds={},rs={},depts=[],ranks=[];
+  allTeachers.forEach(function(t){if(t.department&&!ds[t.department]){ds[t.department]=1;depts.push(t.department);}if(t.rank&&!rs[t.rank]){rs[t.rank]=1;ranks.push(t.rank);}});
+  var fd=document.getElementById('filterDept'),fr=document.getElementById('filterRank');
+  if(fd)fd.innerHTML='<option value="">كل الأقسام</option>'+depts.map(function(d){return '<option value="'+d+'">'+d+'</option>';}).join('');
+  if(fr)fr.innerHTML='<option value="">كل الرتب</option>'+ranks.map(function(r){return '<option value="'+r+'">'+r+'</option>';}).join('');
+}
+
+function renderAdminTeachers(){
+  var tbody=document.getElementById('teachersTable'),empty=document.getElementById('teachersEmpty');
+  var search=(document.getElementById('teacherSearch')||{}).value||'';
+  var dept=(document.getElementById('filterDept')||{}).value||'';
+  var rank=(document.getElementById('filterRank')||{}).value||'';
+  var list=allTeachers.filter(function(t){
+    return(!search||t.name.indexOf(search)>-1||t.cardNumber.indexOf(search)>-1)&&(!dept||t.department===dept)&&(!rank||t.rank===rank);
+  });
+  if(!list.length){if(tbody)tbody.innerHTML='';if(empty)empty.style.display='block';return;}
+  if(empty)empty.style.display='none';
+  if(tbody)tbody.innerHTML=list.map(function(t){
+    var m=allMoalafat.filter(function(r){var cn=getCN(r);return cn&&cn===t.cardNumber;}).length;
+    var tr=allTarbossat.filter(function(r){var cn=getCN(r);return cn&&cn===t.cardNumber;}).length;
+    return '<tr>'+
+      '<td><strong style="color:#818cf8">'+t.cardNumber+'</strong></td>'+
+      '<td><strong>'+t.name+'</strong></td>'+
+      '<td>'+t.rank+'</td>'+
+      '<td><span class="badge badge-blue">'+t.department+'</span></td>'+
+      '<td><span class="badge badge-green">'+m+' مؤلف</span>&nbsp;<span class="badge badge-yellow">'+tr+' تربص</span></td>'+
+      '<td><div class="action-btns">'+
+        '<button class="btn-icon btn-icon-edit" onclick="openTeacherModal(\''+t.cardNumber+'\')" title="تعديل"><i class="fas fa-edit"></i></button>'+
+        '<button class="btn-icon btn-icon-delete" onclick="confirmDelete(\'Teachers\',\''+COL_CN+'\',\''+t.cardNumber+'\',\'الأستاذ: '+t.name+'\')" title="حذف"><i class="fas fa-trash"></i></button>'+
+      '</div></td>'+
+    '</tr>';
+  }).join('');
+}
+
+function renderAdminTable(data,containerId,cols,sheetKey){
+  var el=document.getElementById(containerId);if(!el)return;
+  if(!data||!data.length){el.innerHTML='<div class="empty-state"><i class="fas fa-inbox"></i><p>لا توجد بيانات</p></div>';return;}
+  var sheetName=sheetKey==='moalafat'?SHEET_MOALAFAT:SHEET_TARBOSSAT;
+  var html='<div style="overflow-x:auto"><table class="data-table"><thead><tr><th>الأستاذ</th>';
+  cols.forEach(function(c){html+='<th>'+c+'</th>';});
+  html+='<th>إجراءات</th></tr></thead><tbody>';
+  data.forEach(function(row,idx){
+    var cn=getCN(row);
+    html+='<tr><td><strong>'+getTeacherName(cn)+'</strong></td>';
+    cols.forEach(function(col){
+      var val=row[col]||'---';var c=SC[val];
+      html+='<td>'+(c?'<span style="color:'+c+';font-weight:600">'+val+'</span>':val)+'</td>';
+    });
+    html+='<td><div class="action-btns">'+
+      '<button class="btn-icon btn-icon-edit" onclick="openRecordModal(\''+sheetKey+'\','+idx+')" title="تعديل"><i class="fas fa-edit"></i></button>'+
+      '<button class="btn-icon btn-icon-delete" onclick="confirmDelete(\''+sheetName+'\',\''+COL_CN+'\',\''+cn+'\',\'سجل الصف '+(idx+1)+'\')" title="حذف"><i class="fas fa-trash"></i></button>'+
+    '</div></td></tr>';
+  });
+  html+='</tbody></table></div>';
+  el.innerHTML=html;
+}
+
+function renderLogs(){
+  var el=document.getElementById('tabLogs');if(!el)return;
+  el.innerHTML='<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>جاري التحميل...</p></div>';
+  apiGet(SHEET_LOG).then(function(rows){
+    allLogs=rows;
+    if(!rows||!rows.length){el.innerHTML='<div class="empty-state"><i class="fas fa-history"></i><p>لا يوجد سجل دخول بعد</p></div>';return;}
+    var rev=rows.slice().reverse();
+    var html='<div style="overflow-x:auto"><table class="data-table"><thead><tr><th>#</th><th>الاسم واللقب</th><th>رقم الضمان</th><th>تاريخ الدخول</th><th>وقت الدخول</th></tr></thead><tbody>';
+    rev.forEach(function(row,idx){
+      var k=Object.keys(row);
+      html+='<tr><td>'+(idx+1)+'</td><td><strong>'+(row['الاسم واللقب']||row[k[0]]||'---')+'</strong></td>'+
+        '<td>'+(row['رقم الضمان']||row[k[1]]||'---')+'</td>'+
+        '<td>'+(row['تاريخ الدخول']||row[k[2]]||'---')+'</td>'+
+        '<td><span class="badge badge-blue">'+(row['وقت الدخول']||row[k[3]]||'---')+'</span></td></tr>';
+    });
+    html+='</tbody></table></div>';
+    el.innerHTML=html;
+  }).catch(function(){el.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>تعذر تحميل السجل</p></div>';});
+}
+
+function renderStats(){
+  var el=document.getElementById('tabStats');if(!el)return;
+  el.innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;margin-bottom:28px">'+
+    sCard('fa-users','#6366f1',allTeachers.length,'إجمالي الأساتذة')+
+    sCard('fa-book','#10b981',allMoalafat.length,'المؤلفات البيداغوجية')+
+    sCard('fa-briefcase','#f59e0b',allTarbossat.length,'ملفات التربصات')+
+    sCard('fa-sign-in-alt','#3b82f6',allLogs.length,'عمليات الدخول')+
+  '</div><div style="background:var(--card-bg);border-radius:16px;padding:20px;border:1px solid var(--border)">'+
+  '<h3 style="margin-bottom:15px">نشاط الأساتذة</h3><table class="data-table"><thead><tr><th>الأستاذ</th><th>المؤلفات</th><th>التربصات</th><th>مرات الدخول</th></tr></thead><tbody>'+
+  allTeachers.map(function(t){
+    var m=allMoalafat.filter(function(r){var cn=getCN(r);return cn&&cn===t.cardNumber;}).length;
+    var tr=allTarbossat.filter(function(r){var cn=getCN(r);return cn&&cn===t.cardNumber;}).length;
+    var lg=allLogs.filter(function(r){var cn=r['رقم الضمان']||Object.values(r)[1]||'';return String(cn).trim()===t.cardNumber;}).length;
+    return '<tr><td><strong style="color:#6366f1">'+t.name+'</strong></td><td><span class="badge badge-green">'+m+'</span></td><td><span class="badge badge-yellow">'+tr+'</span></td><td><span class="badge badge-blue">'+lg+'</span></td></tr>';
+  }).join('')+'</tbody></table></div>';
+}
+function sCard(icon,color,val,label){
+  return '<div style="background:var(--card-bg);border-radius:16px;padding:24px;border:1px solid var(--border);text-align:center">'+
+    '<div style="width:50px;height:50px;border-radius:12px;background:'+color+'22;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">'+
+    '<i class="fas '+icon+'" style="color:'+color+';font-size:22px"></i></div>'+
+    '<div style="font-size:32px;font-weight:700;color:var(--text)">'+val+'</div>'+
+    '<div style="color:var(--text-secondary);font-size:14px;margin-top:4px">'+label+'</div></div>';
+}
+
+function filterTeachers(){renderAdminTeachers();}
+function resetFilters(){['teacherSearch','filterDept','filterRank'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});renderAdminTeachers();}
+function refreshData(){allTeachers=[];allMoalafat=[];allTarbossat=[];allLogs=[];loadAllData().then(function(){showAdminTab(currentAdminTab);});}
+
+// ============================================
+// مودال الأستاذ (إضافة / تعديل)
+// ============================================
+function openTeacherModal(cardNumber){
+  editingTeacher = cardNumber||null;
+  var t = cardNumber ? allTeachers.find(function(x){return x.cardNumber===cardNumber;}) : null;
+  document.getElementById('teacherModalTitle').textContent = t ? 'تعديل بيانات أستاذ' : 'إضافة أستاذ جديد';
+  document.getElementById('tCardNumber').value  = t?t.cardNumber:'';
+  document.getElementById('tName').value        = t?t.name:'';
+  document.getElementById('tRank').value        = t?t.rank:'';
+  document.getElementById('tDept').value        = t?t.department:'';
+  document.getElementById('tCardNumber').disabled = !!t;
+  document.getElementById('teacherModal').classList.add('active');
+}
+
+function saveTeacher(){
+  var cn   = document.getElementById('tCardNumber').value.trim();
+  var name = document.getElementById('tName').value.trim();
+  var rank = document.getElementById('tRank').value.trim();
+  var dept = document.getElementById('tDept').value.trim();
+  if(!cn||!name){showToast('error','خطأ','رقم الضمان والاسم مطلوبان');return;}
+  var ov=document.getElementById('loadingOverlay');if(ov)ov.classList.add('active');
+  var row={'رقم الضمان':cn,'الاسم واللقب':name,'الرتبة':rank,'القسم':dept};
+  var p = editingTeacher
+    ? apiPost({action:'update',sheet:SHEET_TEACHERS,key:COL_CN,keyVal:editingTeacher,row:row})
+    : apiPost({action:'add',sheet:SHEET_TEACHERS,row:row});
+  p.then(function(res){
+    if(ov)ov.classList.remove('active');
+    if(res.error){showToast('error','خطأ',res.error);return;}
+    closeModal('teacherModal');
+    if(editingTeacher){var idx=allTeachers.findIndex(function(t){return t.cardNumber===editingTeacher;});if(idx>-1)allTeachers[idx]=mapTeacher(row);}
+    else{if(allTeachers.find(function(t){return t.cardNumber===cn;})){showToast('error','خطأ','رقم الضمان موجود');return;}allTeachers.push(mapTeacher(row));}
+    renderAdminTeachers();populateFilters();
+    showToast('success','تم',editingTeacher?'تم تحديث بيانات الأستاذ':'تم إضافة الأستاذ');
+  }).catch(function(e){if(ov)ov.classList.remove('active');showToast('error','خطأ',e.message);});
+}
+
+// ============================================
+// مودال السجل (مؤلف / تربص)
+// ============================================
+function openRecordModal(sheetKey, idx){
+  editingSheet = sheetKey;
+  editingRecord = idx!==undefined ? idx : null;
+  var isEdit = editingRecord!==null;
+  var data = sheetKey==='moalafat' ? allMoalafat : allTarbossat;
+  var row = isEdit ? data[idx] : null;
+  var cols = COLS[sheetKey];
+  document.getElementById('recordModalTitle').textContent = isEdit ? 'تعديل سجل' : (sheetKey==='moalafat'?'إضافة مؤلف بيداغوجي':'إضافة ملف تربص');
+  var form = document.getElementById('recordForm');
+  var currentCN = row ? getCN(row) : (allTeachers[0]?allTeachers[0].cardNumber:'');
+  form.innerHTML = '<div class="form-group"><label>الأستاذ</label>'+
+    '<div style="position:relative">'+
+    '<select id="rCardNumber" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid #4f46e5;background:#1e293b;color:#ffffff;font-family:inherit;font-size:14px;appearance:none;cursor:pointer">'+
+    allTeachers.map(function(t){
+      var sel=t.cardNumber===currentCN?'selected':'';
+      return '<option value="'+t.cardNumber+'" '+sel+'>'+t.name+' — '+t.cardNumber+'</option>';
+    }).join('')+
+    '</select>'+
+    '<i class="fas fa-chevron-down" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#818cf8;pointer-events:none;font-size:12px"></i>'+
+    '</div></div>'+
+    cols.map(function(col){
+      var val=row?row[col]||'':'';
+      return '<div class="form-group"><label>'+col+'</label><input type="text" id="rField_'+col.replace(/\s/g,'_')+'" value="'+val+'" placeholder="'+col+'" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:#0f172a;color:var(--text);font-family:inherit"></div>';
+    }).join('');
+  document.getElementById('recordModal').classList.add('active');
+}
+
+function saveRecord(){
+  var cn = document.getElementById('rCardNumber').value;
+  var cols = COLS[editingSheet];
+  var sheetName = editingSheet==='moalafat' ? SHEET_MOALAFAT : SHEET_TARBOSSAT;
+  var row = {[COL_CN]: cn};
+  cols.forEach(function(col){
+    var el=document.getElementById('rField_'+col.replace(/\s/g,'_'));
+    if(el) row[col]=el.value;
+  });
+  var ov=document.getElementById('loadingOverlay');if(ov)ov.classList.add('active');
+  var p;
+  if(editingRecord!==null){
+    var data=editingSheet==='moalafat'?allMoalafat:allTarbossat;
+    var oldCN=getCN(data[editingRecord]);
+    p=apiPost({action:'update',sheet:sheetName,key:COL_CN,keyVal:oldCN,row:row});
+  }else{
+    p=apiPost({action:'add',sheet:sheetName,row:row});
+  }
+  p.then(function(res){
+    if(ov)ov.classList.remove('active');
+    if(res.error){showToast('error','خطأ',res.error);return;}
+    closeModal('recordModal');
+    if(editingRecord!==null){
+      if(editingSheet==='moalafat')allMoalafat[editingRecord]=row;
+      else allTarbossat[editingRecord]=row;
+    }else{
+      if(editingSheet==='moalafat')allMoalafat.push(row);
+      else allTarbossat.push(row);
+    }
+    showAdminTab(editingSheet==='moalafat'?'moalafat':'tarbossat');
+    showToast('success','تم',editingRecord!==null?'تم التحديث':'تم الإضافة');
+  }).catch(function(e){if(ov)ov.classList.remove('active');showToast('error','خطأ',e.message);});
+}
+
+// ============================================
+// حذف مع تأكيد
+// ============================================
+var _deleteParams=null;
+function confirmDelete(sheet,key,val,label){
+  _deleteParams={sheet:sheet,key:key,val:val};
+  document.getElementById('deleteMessage').textContent='هل تريد حذف: '+label+' ؟';
+  document.getElementById('deleteModal').classList.add('active');
+}
+
+function doDelete(){
+  if(!_deleteParams)return;
+  var ov=document.getElementById('loadingOverlay');if(ov)ov.classList.add('active');
+  apiPost({action:'delete',sheet:_deleteParams.sheet,key:_deleteParams.key,keyVal:_deleteParams.val})
+    .then(function(res){
+      if(ov)ov.classList.remove('active');
+      closeModal('deleteModal');
+      if(res.error){showToast('error','خطأ',res.error);return;}
+      // تحديث البيانات المحلية
+      if(_deleteParams.sheet===SHEET_TEACHERS) allTeachers=allTeachers.filter(function(t){return t.cardNumber!==_deleteParams.val;});
+      else if(_deleteParams.sheet===SHEET_MOALAFAT) allMoalafat=allMoalafat.filter(function(r){return getCN(r)!==_deleteParams.val;});
+      else if(_deleteParams.sheet===SHEET_TARBOSSAT) allTarbossat=allTarbossat.filter(function(r){return getCN(r)!==_deleteParams.val;});
+      showAdminTab(currentAdminTab);populateFilters();
+      showToast('success','تم الحذف','تم حذف السجل بنجاح');
+      _deleteParams=null;
+    }).catch(function(e){if(ov)ov.classList.remove('active');showToast('error','خطأ',e.message);});
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('active');}
+
+// ============================================
+// Toast
+// ============================================
+function showToast(type,title,msg){
+  var c=document.getElementById('toastContainer');
+  var t=document.createElement('div');t.className='toast '+type;
+  var ic={success:'fa-check-circle',error:'fa-exclamation-circle',warning:'fa-exclamation-triangle'};
+  t.innerHTML='<div class="toast-icon"><i class="fas '+(ic[type]||'fa-info-circle')+'"></i></div><div class="toast-content"><h4>'+title+'</h4><p>'+msg+'</p></div>';
+  c.appendChild(t);setTimeout(function(){t.remove();},4000);
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  loadAllData();
+  var ti=document.getElementById('teacherCardInput'),ai=document.getElementById('adminPasswordInput');
+  if(ti)ti.addEventListener('keypress',function(e){if(e.key==='Enter')teacherLogin();});
+  if(ai)ai.addEventListener('keypress',function(e){if(e.key==='Enter')adminLogin();});
+  document.querySelectorAll('.modal-overlay').forEach(function(o){
+    o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
+  });
+});
+
+</script>
+</body>
+</html>
